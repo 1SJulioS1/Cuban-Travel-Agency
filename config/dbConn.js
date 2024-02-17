@@ -14,7 +14,7 @@ const connectToDatabase = async () => {
 
   try {
     await client.connect();
-    _db = client.db("Blog");
+    _db = client.db("TravelAgency");
     console.log("MongoDB connection established");
   } catch (e) {
     console.error(e);
