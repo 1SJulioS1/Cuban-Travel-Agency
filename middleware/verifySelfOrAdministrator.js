@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
-const { connectToDatabase } = require("../config/dbConn.js");
+const { connectToDatabase } = require("../config/dbConn");
+const { ROLE_LIST } = require("../config/rolesList");
 
 const verifySelfOrAdministrator = (req, res, next) => {
   const authHeader = req.headers["authorization"];
@@ -21,7 +22,7 @@ const verifySelfOrAdministrator = (req, res, next) => {
           email: decodedToken.UserInfo.email,
         });
         if (
-          !decodedToken.UserInfo.role.includes(5150) &&
+          !decodedToken.UserInfo.role.includes(ROLE_LIST.Admin) &&
           result._id.toString() !== req.params.id
         ) {
           return res
