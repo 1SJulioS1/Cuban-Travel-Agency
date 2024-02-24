@@ -23,5 +23,20 @@ const getAllUsersByRole = async (req, res) => {
     return res.status(500).json({ message: "An error occurred." });
   }
 };
+const removeUser = async (req, res) => {
+  const db = await connectToDatabase();
+  const collection = db.collection("User");
 
-module.exports = { getAllUsersByRole };
+  if (!req?.params?.id) {
+    return res.status(400).json({ message: "Id parameter is required" });
+  }
+  const user = await collection.deleteOne({
+    _id: new ObjectId(req.params.id),
+  });
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+  res.json({ message: "User deleted successfully" });
+};
+
+module.exports = { getAllUsersByRole, removeUser };
