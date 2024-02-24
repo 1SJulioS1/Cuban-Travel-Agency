@@ -7,6 +7,9 @@ const {
   getAllUsersByRole,
 } = require("../../controllers/users/adminController");
 
+const { getUser } = require("../../controllers/users/userController");
+
 router.route("/").post(verifyAdministrator, createUser);
 router.route("/users").get(verifyAdministrator, getAllUsersByRole);
+router.route("/:id").get(verifyAdministrator, getUser);
 module.exports = router;

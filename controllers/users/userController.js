@@ -30,5 +30,29 @@ const createUser = async (req, res) => {
     return res.status(500).json({ message: `Error creating user: ${error}` });
   }
 };
+const getUser = async (req, res) => {
+  try {
+    const db = await connectToDatabase();
+    const collection = db.collection("User");
 
-module.exports = { createUser };
+    if (!req?.params?.id) {
+      return res.status(400).json({ message: "Id parameter is required" });
+    }
+    const user = await collection
+      .find(
+        { _id: new ObjectId(req.params.id) },
+        { projection: { _id: 0, username: 1, email: 1 } }
+      )
+      .toArray();
+    if (!user) {
+      return res
+        .status(400)
+        .json({ message: `User with ID ${req.params.id} not found` });
+    }
+    res.json(user);
+  } catch (error) {
+    console.error("Error occurred:", error);
+    return res.status(500).json({ message: "An error occurred." });
+  }
+};
+module.exports = { createUser, getUser };

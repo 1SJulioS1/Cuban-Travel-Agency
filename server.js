@@ -27,7 +27,7 @@ app.use("/refresh", require("./routes/authorization/refresh"));
 app.use("/logout", require("./routes/authorization/logout"));
 
 app.use(verifyJWT);
-app.use("/group/admin", require("./routes/user/admin"));
+app.use("/admin", require("./routes/user/admin"));
 
 app.use(errorHandler);
 
