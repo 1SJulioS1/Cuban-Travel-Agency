@@ -68,12 +68,10 @@ const updateUser = async (req, res) => {
 
   const updateFields = {};
   for (const key in userData) {
-    console.log(userData[key], user[key]);
     if (userData[key] !== user[key]) {
       updateFields[key] = userData[key];
     }
   }
-  console.log(updateFields);
   if (Object.keys(updateFields).length === 0) {
     return res.status(400).json({ message: "Provide a different user data" });
   }
