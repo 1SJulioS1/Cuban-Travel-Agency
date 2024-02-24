@@ -14,11 +14,8 @@ const handleLogin = async (req, res) => {
   }
 
   const foundUser = await collection.findOne({ email });
-
   if (!foundUser) {
-    return res
-      .sendStatus(401)
-      .json({ message: "User not found in our records." });
+    return res.status(401).json({ message: "User not found in our records." });
   }
 
   const match = await bcrypt.compare(password, foundUser.password);
