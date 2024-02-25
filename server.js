@@ -28,6 +28,7 @@ app.use("/logout", require("./routes/authorization/logout"));
 
 app.use(verifyJWT);
 app.use("/admin", require("./routes/user/admin"));
+app.use("/editor", require("./routes/user/editor"));
 
 app.use(errorHandler);
 

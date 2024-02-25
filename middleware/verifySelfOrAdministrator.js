@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const { connectToDatabase } = require("../config/dbConn");
-const { ROLE_LIST } = require("../config/rolesList");
+const ROLE_LIST = require("../config/rolesList");
 
 const verifySelfOrAdministrator = (req, res, next) => {
   const authHeader = req.headers["authorization"];
@@ -18,6 +18,7 @@ const verifySelfOrAdministrator = (req, res, next) => {
       try {
         const db = await connectToDatabase();
         const collection = db.collection("User");
+        console.log(decodedToken.UserInfo.email);
         const result = await collection.findOne({
           email: decodedToken.UserInfo.email,
         });
