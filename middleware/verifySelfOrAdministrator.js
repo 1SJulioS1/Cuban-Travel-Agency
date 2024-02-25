@@ -15,27 +15,21 @@ const verifySelfOrAdministrator = (req, res, next) => {
     async (err, decodedToken) => {
       if (err) return res.status(403).json({ message: "Invalid token" }).end();
 
-      try {
-        const db = await connectToDatabase();
-        const collection = db.collection("User");
-        console.log(decodedToken.UserInfo.email);
-        const result = await collection.findOne({
-          email: decodedToken.UserInfo.email,
-        });
-        if (
-          !decodedToken.UserInfo.role.includes(ROLE_LIST.Admin) &&
-          result._id.toString() !== req.params.id
-        ) {
-          return res
-            .status(401)
-            .json({ message: "You don't have the necessary permissions " })
-            .end();
-        }
-        next();
-      } catch (error) {
-        console.error("Error occurred:", error);
-        return res.status(500).json({ message: "An error occurred." }).end();
+      const db = await connectToDatabase();
+      const collection = db.collection("User");
+      const result = await collection.findOne({
+        email: decodedToken.UserInfo.email,
+      });
+      if (
+        !decodedToken.UserInfo.role.includes(ROLE_LIST.Admin) &&
+        result._id.toString() !== req.params.id
+      ) {
+        return res
+          .status(401)
+          .json({ message: "You don't have the necessary permissions " })
+          .end();
       }
+      next();
     }
   );
 };
