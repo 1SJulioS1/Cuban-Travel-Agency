@@ -25,10 +25,12 @@ app.use("/group", require("./routes/initialAdmin"));
 app.use("/auth", require("./routes/authorization/auth"));
 app.use("/refresh", require("./routes/authorization/refresh"));
 app.use("/logout", require("./routes/authorization/logout"));
+app.use("/user", require("./routes/user/reader"));
 
 app.use(verifyJWT);
 app.use("/admin", require("./routes/user/admin"));
 app.use("/editor", require("./routes/user/editor"));
+app.use("/reader", require("./routes/user/reader"));
 
 app.use(errorHandler);
 
