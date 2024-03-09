@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 const createUser = async (req, res) => {
   const db = await connectToDatabase();
   const collection = db.collection("User");
-  const { username, password, email, role } = req.body;
+  const { username, password, email, role, photo } = req.body;
   if (!username || !password || !email || !role) {
     return res.status(400).json({
       message: "Username, password, email, and role must be provided",
@@ -22,6 +22,7 @@ const createUser = async (req, res) => {
     role: [role],
     password: hashedPwd,
     email,
+    photo,
   });
   return res.status(201).json({ message: "User created successfully" });
 };
@@ -35,7 +36,7 @@ const getUser = async (req, res) => {
   const user = await collection
     .find(
       { _id: new ObjectId(req.params.id) },
-      { projection: { _id: 0, username: 1, email: 1 } }
+      { projection: { _id: 0, username: 1, email: 1, photo: 1 } }
     )
     .toArray();
   if (!user) {
