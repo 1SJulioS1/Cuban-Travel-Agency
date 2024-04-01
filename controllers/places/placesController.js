@@ -92,5 +92,15 @@ const getPlace = async (req, res) => {
   }
   res.json(place);
 };
+const getPlaces = async (req, res) => {
+  const db = await connectToDatabase();
+  const collection = db.collection("Places");
 
-module.exports = { createPlace, updatePlace, removePlace, getPlace };
+  const place = await collection.find({}, { projection: { _id: 0 } }).toArray();
+  if (!place) {
+    return res.status(400).json({ message: `No places in database` });
+  }
+  res.json(place);
+};
+
+module.exports = { createPlace, updatePlace, removePlace, getPlace, getPlaces };
