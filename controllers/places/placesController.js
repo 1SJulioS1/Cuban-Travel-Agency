@@ -9,7 +9,7 @@ const createPlace = async (req, res) => {
       message: "Name and photo of the place is required",
     });
   }
-  const itemsArray = photos.split(",");
+  const itemsArray = photos.trim().split(",");
 
   const duplicate = await collection.findOne({ name });
   if (duplicate) {
@@ -25,7 +25,7 @@ const createPlace = async (req, res) => {
 const updatePlace = async (req, res) => {
   const db = await connectToDatabase();
   const collection = db.collection("Places");
-  const data = req.body;
+  var data = req.body;
 
   if (Object.keys(req.body).length === 0) {
     return res.sendStatus(400).json({ message: "No data submitted" });
@@ -35,19 +35,24 @@ const updatePlace = async (req, res) => {
   if (!place) {
     return res.status(400).json({ message: "Place not found" });
   }
-  const updateFields = {};
-  for (const key in data) {
-    if (data[key] !== place[key]) {
-      updateFields[key] = data[key];
-    }
+
+  if (data.photos) {
+    data.photos = data.photos.split(",").map((photo) => photo.trim());
   }
-  if (Object.keys(updateFields).length === 0) {
-    return res.status(400).json({ message: "Provide a different user data" });
+
+  const isSamePhotos =
+    JSON.stringify(place.photos) === JSON.stringify(data.photos);
+
+  // Si las fotos son las mismas, verificar si hay otros cambios
+  if (isSamePhotos) {
+    // Aquí puedes agregar lógica para verificar otros campos si es necesario
+    return res.status(200).json({ message: "No changes detected" });
   }
+
   const result = await collection.updateOne(
     { name: req.params.name },
     {
-      $set: updateFields,
+      $set: data,
     }
   );
 
