@@ -43,9 +43,7 @@ const updatePlace = async (req, res) => {
   const isSamePhotos =
     JSON.stringify(place.photos) === JSON.stringify(data.photos);
 
-  // Si las fotos son las mismas, verificar si hay otros cambios
   if (isSamePhotos) {
-    // Aquí puedes agregar lógica para verificar otros campos si es necesario
     return res.status(200).json({ message: "No changes detected" });
   }
 
@@ -59,4 +57,19 @@ const updatePlace = async (req, res) => {
   return res.status(200).json({ message: "Place updated successfully" });
 };
 
-module.exports = { createPlace, updatePlace };
+const removePlace = async (req, res) => {
+  const db = await connectToDatabase();
+  const collection = db.collection("Places");
+
+  if (!req?.params?.name) {
+    return res.status(400).json({ message: "Name parameter is required" });
+  }
+  const user = await collection.deleteOne({
+    name: req.params.name,
+  });
+  if (!user) {
+    return res.status(404).json({ message: "Place not found" });
+  }
+  res.json({ message: "Place deleted successfully" });
+};
+module.exports = { createPlace, updatePlace, removePlace };
