@@ -72,4 +72,25 @@ const removePlace = async (req, res) => {
   }
   res.json({ message: "Place deleted successfully" });
 };
-module.exports = { createPlace, updatePlace, removePlace };
+
+const getPlace = async (req, res) => {
+  const db = await connectToDatabase();
+  const collection = db.collection("Places");
+
+  if (!req?.params?.name) {
+    return res.status(400).json({ message: "Name parameter is required" });
+  }
+
+  const place = await collection.findOne(
+    { name: req.params.name },
+    { projection: { _id: 0 } }
+  );
+  if (!place) {
+    return res
+      .status(400)
+      .json({ message: `Place with name ${req.params.name} not found` });
+  }
+  res.json(place);
+};
+
+module.exports = { createPlace, updatePlace, removePlace, getPlace };
