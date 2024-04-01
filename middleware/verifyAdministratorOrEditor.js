@@ -14,10 +14,11 @@ const verifyAdministratorOrEditor = (req, res, next) => {
       return res.sendStatus(403).json({ message: "Invalid token" });
     }
 
-    const rolesToCheck = [
-      ROLE_LIST.Admin.toString(),
-      ROLE_LIST.Editor.toString(),
-    ];
+    const rolesToCheck =
+      typeof decodedToken.UserInfo.role == "string"
+        ? [ROLE_LIST.Admin.toString(), ROLE_LIST.Editor.toString()]
+        : [ROLE_LIST.Admin, ROLE_LIST.Editor];
+
     if (
       !rolesToCheck.some((role) => decodedToken.UserInfo.role.includes(role))
     ) {
