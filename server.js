@@ -31,6 +31,7 @@ app.use(verifyJWT);
 app.use("/admin", require("./routes/user/admin"));
 app.use("/editor", require("./routes/user/editor"));
 app.use("/reader", require("./routes/user/reader"));
+app.use("/place", require("./routes/places/places"));
 
 app.use(errorHandler);
 

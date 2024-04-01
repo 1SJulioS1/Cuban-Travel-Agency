@@ -55,7 +55,7 @@ const updateUser = async (req, res) => {
     return res.status(400).json({ message: "Id parameter is required" });
   }
 
-  const userData = req.body;
+  var userData = req.body;
   if (Object.keys(req.body).length === 0) {
     return res.sendStatus(400).json({ message: "No data submitted" });
   }
@@ -66,7 +66,9 @@ const updateUser = async (req, res) => {
   if (!user) {
     return res.status(400).json({ message: "User not found" });
   }
-
+  if (userData.password) {
+    userData.password = await bcrypt.hash(userData.password, 10);
+  }
   const updateFields = {};
   for (const key in userData) {
     if (userData[key] !== user[key]) {
