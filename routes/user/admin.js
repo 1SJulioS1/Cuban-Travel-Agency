@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const verifySelfOrAdminstrator = require("../../middleware/verifySelfOrAdministrator");
 const verifyAdministrator = require("../../middleware/verifyAdministrator");
 const {
   createUser,
