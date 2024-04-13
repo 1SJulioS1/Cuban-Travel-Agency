@@ -5,18 +5,17 @@ const {
   createTransportation,
   getTransportation,
   updateTransportation,
+  removeTransportation,
   addSpending,
 } = require("../../controllers/transportation/transportationController");
 
 router
   .route("/")
   .post(verifyAdministratorOrEditor, createTransportation)
-  .get(getTransportation);
-// delete
-// get all transportation
-router
-  .route("/:name/:type/:phone")
+  .get(verifyAdministratorOrEditor, getTransportation)
+  .delete(verifyAdministratorOrEditor, removeTransportation)
   .put(verifyAdministratorOrEditor, updateTransportation);
+
 router
   .route("/spending/:name/:type/:phone")
   .post(verifyAdministratorOrEditor, addSpending);

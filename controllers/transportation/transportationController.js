@@ -102,10 +102,10 @@ const getTransportation = async (req, res) => {
 const updateTransportation = async (req, res) => {
   const db = await connectToDatabase();
   const collection = db.collection("Transportation");
-  if (!req.params?.name && !req.params?.type && !req.params?.phone) {
+  if (!req.query?.name && !req.query?.type && !req.query?.phone) {
     return res.status(404).json({ message: "Update parameters are required" });
   }
-  const transportation = await collection.findOne(req.params);
+  const transportation = await collection.findOne(req.query);
   if (!transportation) {
     return res
       .status(400)
@@ -125,10 +125,25 @@ const updateTransportation = async (req, res) => {
     return res.status(400).json({ message: "Provide a different user data" });
   }
 
-  const result = await collection.updateOne(req.params, { $set: updateFields });
+  const result = await collection.updateOne(req.query, { $set: updateFields });
   return res
     .status(200)
     .json({ message: "Transportation service updated successfully" });
+};
+
+const removeTransportation = async (req, res) => {
+  const db = await connectToDatabase();
+  const collection = db.collection("Transportation");
+  console.log(req.query);
+  if (!req.query?.name && !req.query?.type && !req.query?.phone) {
+    return res.status(404).json({ message: "Update parameters are required" });
+  }
+
+  const transportation = await collection.deleteOne(req.params);
+  if (!transportation) {
+    return res.status(404).json({ message: "Transportation not found" });
+  }
+  res.json({ message: "Transportation deleted successfully" });
 };
 
 module.exports = {
@@ -136,4 +151,5 @@ module.exports = {
   addSpending,
   getTransportation,
   updateTransportation,
+  removeTransportation,
 };
