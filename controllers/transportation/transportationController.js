@@ -87,7 +87,6 @@ const addSpending = async (req, res) => {
 const getTransportation = async (req, res) => {
   const db = await connectToDatabase();
   const collection = db.collection("Transportation");
-  const searchOptions = new SearchOptions(req.query);
   let query = {};
   if (req.query.name) query.name = req.query.name;
   if (req.query.type) query.type = req.query.type;
