@@ -1,4 +1,5 @@
 const { connectToDatabase } = require("../../config/dbConn.js");
+const SearchOptions = require("../../utils/searchOptions");
 const { ObjectId } = require("mongodb");
 const cookieParser = require("cookie-parser");
 
@@ -70,7 +71,7 @@ const addSpending = async (req, res) => {
     email: decodedEmail,
   };
 
-  const result = await db.collection("Transportation").updateOne(
+  const result = collection.updateOne(
     { name, type, phone },
     {
       $push: {
@@ -83,4 +84,18 @@ const addSpending = async (req, res) => {
   });
 };
 
-module.exports = { createTransportation, addSpending };
+const getTransportation = async (req, res) => {
+  const db = await connectToDatabase();
+  const collection = db.collection("Transportation");
+  const searchOptions = new SearchOptions(req.query);
+  let query = {};
+  if (req.query.name) query.name = req.query.name;
+  if (req.query.type) query.type = req.query.type;
+  if (req.query.phone) query.phone = req.query.phone;
+  if (req.query.information) query.information = req.query.information;
+  console.log(query);
+  const result = await collection.findOne(query, { _id: 0 });
+
+  res.json(result);
+};
+module.exports = { createTransportation, addSpending, getTransportation };

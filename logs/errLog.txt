@@ -65,3 +65,10 @@
 20240403	21:50:00	36b8c155-4636-4473-9588-c0e80005da9b	Error: Cannot set headers after they are sent to the client
 20240403	21:50:10	5340265c-a816-4cc7-b6b0-54fcbc447cc5	Error: Cannot set headers after they are sent to the client
 20240403	22:00:47	c180ff79-0010-4aa6-b5d4-4bec5c0e5668	Error: Cannot set headers after they are sent to the client
+20240407	22:02:08	f55a5498-906f-4598-b5e0-daeb244da217	Error: Cannot set headers after they are sent to the client
+20240407	22:02:41	70c285e3-f0d3-4b77-9801-7b0fbe9f819a	Error: Cannot set headers after they are sent to the client
+20240407	22:40:14	c6680ac6-6fac-412b-94dc-fcde22384e4e	ReferenceError: sortFields is not defined
+20240410	23:40:44	53fe9125-b03c-423f-a783-ebf7c0c6b703	Error: Cannot set headers after they are sent to the client
+20240410	23:40:54	ec3de31d-71f9-4342-b9dc-0adde9d579ea	Error: Cannot set headers after they are sent to the client
+20240413	09:45:16	02580f8f-0087-45e4-a8c8-299008731ac9	Error: Cannot set headers after they are sent to the client
+20240413	10:44:19	d6a88b19-924c-443e-b924-4ad44881257e	Error: Cannot set headers after they are sent to the client
