@@ -4,6 +4,7 @@ const verifyAdministratorOrEditor = require("../../middleware/verifyAdministrato
 const {
   createTransportation,
   getTransportation,
+  updateTransportation,
   addSpending,
 } = require("../../controllers/transportation/transportationController");
 
@@ -11,12 +12,11 @@ router
   .route("/")
   .post(verifyAdministratorOrEditor, createTransportation)
   .get(verifyAdministratorOrEditor, getTransportation);
-
 // get
 // put
 // delete
 // get all transportation
-
+router.route("/:name/:type/:phone").put(updateTransportation);
 router
   .route("/spending/:name/:type/:phone")
   .post(verifyAdministratorOrEditor, addSpending);

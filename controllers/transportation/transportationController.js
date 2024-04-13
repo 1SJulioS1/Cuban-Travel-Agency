@@ -97,4 +97,40 @@ const getTransportation = async (req, res) => {
 
   res.json(result);
 };
-module.exports = { createTransportation, addSpending, getTransportation };
+const updateTransportation = async (req, res) => {
+  const db = await connectToDatabase();
+  const collection = db.collection("Transportation");
+  if (!req.params?.name && !req.params?.type && !req.params?.phone) {
+    return res.status(404).json({ message: "Update parameters are required" });
+  }
+  const transportation = await collection.findOne(req.params);
+  if (!transportation) {
+    return res
+      .status(400)
+      .json({ message: "Transportation service not found" });
+  }
+  const transportationData = req.body;
+  if (Object.keys(req.body).length === 0) {
+    return res.sendStatus(400).json({ message: "No data submitted" });
+  }
+  const updateFields = {};
+  for (const key in transportationData) {
+    if (transportationData[key] !== transportation[key]) {
+      updateFields[key] = transportationData[key];
+    }
+  }
+  if (Object.keys(updateFields).length === 0) {
+    return res.status(400).json({ message: "Provide a different user data" });
+  }
+
+  const result = await collection.updateOne(req.params, { $set: updateFields });
+  return res
+    .status(200)
+    .json({ message: "Transportation service updated successfully" });
+};
+module.exports = {
+  createTransportation,
+  addSpending,
+  getTransportation,
+  updateTransportation,
+};
