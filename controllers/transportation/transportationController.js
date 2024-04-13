@@ -92,8 +92,10 @@ const getTransportation = async (req, res) => {
   if (req.query.type) query.type = req.query.type;
   if (req.query.phone) query.phone = req.query.phone;
   if (req.query.information) query.information = req.query.information;
-  console.log(query);
-  const result = await collection.findOne(query, { _id: 0 });
+  var result;
+  Object.keys(query).length === 0
+    ? (result = await collection.find({}, { _id: 0 }).toArray())
+    : (result = await collection.findOne(query, { _id: 0 }));
 
   res.json(result);
 };
@@ -128,6 +130,7 @@ const updateTransportation = async (req, res) => {
     .status(200)
     .json({ message: "Transportation service updated successfully" });
 };
+
 module.exports = {
   createTransportation,
   addSpending,

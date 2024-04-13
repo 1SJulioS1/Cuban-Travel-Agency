@@ -11,12 +11,12 @@ const {
 router
   .route("/")
   .post(verifyAdministratorOrEditor, createTransportation)
-  .get(verifyAdministratorOrEditor, getTransportation);
-// get
-// put
+  .get(getTransportation);
 // delete
 // get all transportation
-router.route("/:name/:type/:phone").put(updateTransportation);
+router
+  .route("/:name/:type/:phone")
+  .put(verifyAdministratorOrEditor, updateTransportation);
 router
   .route("/spending/:name/:type/:phone")
   .post(verifyAdministratorOrEditor, addSpending);
