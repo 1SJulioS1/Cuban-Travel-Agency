@@ -87,3 +87,7 @@
 20240413	11:56:59	dc126db3-eff4-4f9e-9a48-7df931de594e	Error: Cannot set headers after they are sent to the client
 20240413	11:57:59	8989c622-d093-4b87-9991-f62cee3b484a	Error: Cannot set headers after they are sent to the client
 20240413	12:02:53	c39198df-1a60-41f0-9e0e-5900e9078399	Error: Cannot set headers after they are sent to the client
+20240414	10:41:53	0bd880df-608e-4fb9-a9f6-64f1818318df	Error: Cannot set headers after they are sent to the client
+20240417	22:05:36	b21ba0a2-c075-4ea2-8ca4-b22445eb1b7f	Error: Cannot set headers after they are sent to the client
+20240417	22:05:37	cc203079-58c6-4692-8027-5d06d7475ea3	Error: Cannot set headers after they are sent to the client
+20240501	18:45:37	b47546d9-a089-4e63-af81-0aebb230cdb6	Error: Cannot set headers after they are sent to the client
