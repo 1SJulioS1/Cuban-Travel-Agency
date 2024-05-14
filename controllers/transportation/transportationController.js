@@ -68,14 +68,29 @@ const addSpending = async (req, res) => {
       message: "Transportation not found",
     });
   }
+
+  const spendingIndex = transportation.spending.findIndex(
+    (s) =>
+      s.name === req.body.name &&
+      s.type === req.body.type &&
+      parseInt(s.amount) === parseInt(req.body.amount) &&
+      compareDate(
+        new Date(s.date).toISOString(),
+        new Date(req.body.date).toISOString()
+      ) === 0
+  );
+  if (spendingIndex != -1) {
+    return res
+      .status(409)
+      .json({ message: "Spending for this transportation already exist" });
+  }
   const spending = {
     name: req.body.name,
     type: req.body.type,
-    amount: req.body.amount,
+    amount: parseInt(req.body.amount),
     date: new Date(req.body.date),
     email: decodedEmail,
   };
-
   const result = collection.updateOne(
     { name, type, phone },
     {
