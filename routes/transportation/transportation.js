@@ -8,6 +8,7 @@ const {
   removeTransportation,
   addSpending,
   updateSpending,
+  removeSpending,
 } = require("../../controllers/transportation/transportationController");
 
 router
@@ -20,9 +21,8 @@ router
 router
   .route("/spending/:name/:type/:phone")
   .post(verifyAdministratorOrEditor, addSpending)
-  .put(updateSpending);
-
-//.put(verifyAdministratorOrEditor,updateSpending)
+  .put(verifyAdministratorOrEditor, updateSpending)
+  .delete(verifyAdministratorOrEditor, removeSpending);
 //.delete(verifyAdministratorOrEditor, removeSpending)
 //.get(verifyAdministratorOrEditor, listSpending)
 //Queries

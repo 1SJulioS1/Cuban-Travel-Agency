@@ -185,8 +185,7 @@ const updateSpending = async (req, res) => {
   if (Object.keys(transportationData).length === 0) {
     return res.status(400).json({ message: "No data submitted" });
   }
-  // console.log(new Date(req.query.spendingDate));
-  // console.log(req.query.spendingName);
+
   const transportation = await collection.findOne({
     name: req.params.name,
     type: req.params.type,
@@ -259,6 +258,44 @@ const updateSpending = async (req, res) => {
   res.json({ message: "Spending updated successfully" });
 };
 
+const removeSpending = async (req, res) => {
+  const db = await connectToDatabase();
+  const collection = db.collection("Transportation");
+  const { name, type, phone } = req.params;
+  const { spendingName, spendingDate, spendingType, spendingAmount } =
+    req.query;
+  if (!name || !type || !phone) {
+    return res
+      .status(400)
+      .json({ message: "All transportation details must be provided" });
+  }
+  if (!spendingName || !spendingDate || !spendingType || !spendingAmount) {
+    return res
+      .status(400)
+      .json({ message: "All spending details must be provided" });
+  }
+  const updateResult = await collection.updateOne(
+    { name, type, phone },
+    {
+      $pull: {
+        spending: {
+          name: spendingName,
+          type: spendingType,
+          amount: parseInt(spendingAmount),
+          date: new Date(spendingDate),
+        },
+      },
+    }
+  );
+  console.log(updateResult);
+  if (updateResult.modifiedCount === 0) {
+    return res
+      .status(404)
+      .json({ message: "No spending found with the provided details" });
+  }
+  res.json({ message: "Spending deleted successfully" });
+};
+
 module.exports = {
   createTransportation,
   getTransportation,
@@ -266,4 +303,5 @@ module.exports = {
   removeTransportation,
   addSpending,
   updateSpending,
+  removeSpending,
 };
