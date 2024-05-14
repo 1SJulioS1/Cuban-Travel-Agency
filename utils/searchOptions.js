@@ -1,19 +1,9 @@
-class SearchOptions {
-  constructor(query) {
-    if (query.limit) {
-      this.limit = parseInt(query.limit);
-    }
+const compareDate = (date1, date2) => {
+  // Extraer solo la parte de la fecha (YYYY-MM-DD)
+  const datePart1 = date1.slice(0, 10);
+  const datePart2 = date2.slice(0, 10);
 
-    this.sortFields = {};
-    if (query.sortBy) {
-      const sortStr = query.sortBy.split(",");
-      sortStr.forEach((field) => {
-        field[0] != "-"
-          ? (this.sortFields[field] = "1")
-          : (this.sortFields[field.slice(1)] = "-1");
-      });
-    }
-  }
-}
+  return datePart1 === datePart2 ? 0 : datePart1 < datePart2 ? -1 : 1;
+};
 
-module.exports = SearchOptions;
+module.exports = compareDate;

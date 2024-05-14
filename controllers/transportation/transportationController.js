@@ -1,5 +1,5 @@
 const { connectToDatabase } = require("../../config/dbConn.js");
-const SearchOptions = require("../../utils/searchOptions");
+const compareDate = require("../../utils/searchOptions");
 const { ObjectId } = require("mongodb");
 const cookieParser = require("cookie-parser");
 
@@ -35,13 +35,13 @@ const createTransportation = async (req, res) => {
     document.spending = spending.map((item) => ({
       ...item,
       editor: decodedEmail,
-      date: new Date(item.date),
+      date: new Date(item.date).toISOString(),
     }));
     const result = await collection.insertOne(document);
-    res.status(201).json({
-      message: "Transportation created successfully",
-    });
   }
+  res.status(201).json({
+    message: "Transportation created successfully",
+  });
 };
 
 const addSpending = async (req, res) => {
@@ -62,7 +62,12 @@ const addSpending = async (req, res) => {
   const payloadJson = Buffer.from(payloadBase64Url, "base64").toString("utf8");
   const payload = JSON.parse(payloadJson);
   const decodedEmail = payload.email;
-
+  const transportation = await collection.findOne(req.params);
+  if (!transportation) {
+    return res.status(404).json({
+      message: "Transportation not found",
+    });
+  }
   const spending = {
     name: req.body.name,
     type: req.body.type,
@@ -149,58 +154,64 @@ const updateSpending = async (req, res) => {
   const db = await connectToDatabase();
   const collection = db.collection("Transportation");
   if (
-    !req.params?.name &&
-    !req.params?.type &&
-    !req.params?.phone &&
-    !req.query?.spendingName &&
-    !req.query?.spendingDate
+    !req.params?.name ||
+    !req.params?.type ||
+    !req.params?.phone ||
+    !req.query?.spendingName ||
+    !req.query?.spendingDate ||
+    !req.body.amount ||
+    !req.body.date
   ) {
-    return res.status(400).json({ message: "Name, date and id are required" });
+    return res
+      .status(400)
+      .json({ message: "Spending name and date is required" });
   }
-  // const transportationData = req.body;
-
-  // if (Object.keys(transportationData).length === 0) {
-  //   return res.sendStatus(400).json({ message: "No data submitted" });
-  // }
-
+  const transportationData = req.body;
+  if (Object.keys(transportationData).length === 0) {
+    return res.status(400).json({ message: "No data submitted" });
+  }
+  // console.log(new Date(req.query.spendingDate));
+  // console.log(req.query.spendingName);
   const transportation = await collection.findOne({
     name: req.params.name,
     type: req.params.type,
     phone: req.params.phone,
-    "spending.name": req.query.spendingName,
-    "spending.date": new Date(req.query.spendingDate),
   });
   if (!transportation) {
-    return res.status(400).json({ message: "No spending for submitted data" });
-  }
-  const spendingToUpdate = transportation.spending.find(
-    (spending) =>
-      spending.name === req.query.spendingName &&
-      spending.date.toISOString() ===
-        new Date(req.query.spendingDate).toISOString()
-  );
-
-  let isDataDifferent = false;
-  Object.keys(req.body).forEach((key) => {
-    if (spendingToUpdate[key] !== req.body[key]) {
-      isDataDifferent = true;
-    }
-  });
-
-  if (!isDataDifferent) {
     return res
-      .status(409)
-      .json({ message: "No changes detected in the submitted data" });
+      .status(404)
+      .json({ message: "No transportation for submitted data" });
   }
-
+  const spendingIndex = transportation.spending.findIndex(
+    (s) =>
+      s.name === req.query.spendingName &&
+      compareDate(
+        new Date(s.date).toISOString(),
+        new Date(req.query.spendingDate).toISOString()
+      ) === 0
+  );
+  if (spendingIndex === -1) {
+    return res
+      .status(404)
+      .json({ message: "No transportation spending for submitted data" });
+  }
+  const spendingItem = transportation.spending[spendingIndex];
+  if (
+    spendingItem.amount === req.body.amount &&
+    compareDate(
+      new Date(spendingItem.date).toISOString(),
+      new Date(req.body.date).toISOString()
+    ) === 0
+  ) {
+    return res.status(400).json({
+      message: "The data in the request body matches the existing document.",
+    });
+  }
+  console.log(transportation.spending[3]);
   const payloadBase64Url = req.cookies["jwt"].split(".")[1];
   const payloadJson = Buffer.from(payloadBase64Url, "base64").toString("utf8");
   const payload = JSON.parse(payloadJson);
   const decodedEmail = payload.email;
-  let updateFields = Object.keys(req.body).reduce((acc, key) => {
-    acc[`spending.$[elem].${key}`] = req.body[key];
-    return acc;
-  }, {});
   const updateResult = await collection.updateOne(
     {
       name: req.params.name,
@@ -208,17 +219,24 @@ const updateSpending = async (req, res) => {
       phone: req.params.phone,
     },
     {
-      $set: updateFields,
+      $set: {
+        [`spending.$[element].amount`]: parseInt(req.body.amount),
+        [`spending.$[element].date`]: new Date(req.body.date),
+        [`spending.$[element].email`]: decodedEmail,
+      },
     },
     {
       arrayFilters: [
         {
-          "elem.name": req.query.spendingName,
-          "elem.date": new Date(req.query.spendingDate),
+          "element.name": req.query.spendingName,
+          "element.date": {
+            $eq: new Date(req.query.spendingDate),
+          },
         },
       ],
     }
   );
+  console.log(updateResult);
   if (!updateResult.modifiedCount) {
     return res.status(404).json({ message: "Update failed" });
   }

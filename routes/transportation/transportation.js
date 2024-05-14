@@ -20,7 +20,7 @@ router
 router
   .route("/spending/:name/:type/:phone")
   .post(verifyAdministratorOrEditor, addSpending)
-  .put(verifyAdministratorOrEditor, updateSpending);
+  .put(updateSpending);
 
 //.put(verifyAdministratorOrEditor,updateSpending)
 //.delete(verifyAdministratorOrEditor, removeSpending)
