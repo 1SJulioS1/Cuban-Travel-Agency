@@ -9,6 +9,7 @@ const {
   addSpending,
   updateSpending,
   removeSpending,
+  getSpending,
 } = require("../../controllers/transportation/transportationController");
 
 router
@@ -20,10 +21,11 @@ router
 
 router
   .route("/spending/:name/:type/:phone")
+  .get(getSpending)
   .post(verifyAdministratorOrEditor, addSpending)
   .put(verifyAdministratorOrEditor, updateSpending)
   .delete(verifyAdministratorOrEditor, removeSpending);
-//.delete(verifyAdministratorOrEditor, removeSpending)
+
 //.get(verifyAdministratorOrEditor, listSpending)
 //Queries
 // Filter spending by date

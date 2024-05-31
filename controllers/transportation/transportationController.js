@@ -250,7 +250,6 @@ const updateSpending = async (req, res) => {
       ],
     }
   );
-  console.log(updateResult);
   if (!updateResult.modifiedCount) {
     return res.status(404).json({ message: "Update failed" });
   }
@@ -296,6 +295,90 @@ const removeSpending = async (req, res) => {
   res.json({ message: "Spending deleted successfully" });
 };
 
+const getSpending = async (req, res) => {
+  const db = await connectToDatabase();
+  const collection = db.collection("Transportation");
+  if (!req.params.name || !req.params.type || !req.params.phone) {
+    res.status(400).json({ message: "No transportation data submitted" });
+  }
+
+  // console.log(req.params.name, req.query.type, req.query.phone);
+  const transportation = await collection.findOne({
+    name: req.params.name,
+    type: req.params.type,
+    phone: req.params.phone,
+  });
+  if (!transportation) {
+    return res
+      .status(400)
+      .json({ message: "No transportation with submitted data" });
+  }
+  let query = {};
+  if (req.query.spendingName) query.name = req.query.spendingName;
+  if (req.query.spendingType) query.type = req.query.spendingType;
+  if (req.query.spendingAmount)
+    query.amount = parseInt(req.query.spendingAmount);
+  if (req.query.spendingDate) query.date = new Date(req.query.spendingDate);
+  if (req.query.spendingEditor) query.editor = req.query.spendingEditor;
+  if (req.query.dateOperator) query.dateOperator = req.query.dateOperator;
+  if (req.query.amountOperator) query.amountOperator = req.query.amountOperator;
+
+  let filteredSpendings = transportation.spending;
+  if (query.name) {
+    filteredSpendings = filteredSpendings.filter(
+      (spending) => spending.name === query.name
+    );
+  }
+  if (query.type) {
+    filteredSpendings = filteredSpendings.filter(
+      (spending) => spending.type === query.type
+    );
+  }
+  if (query.amount) {
+    filteredSpendings = filteredSpendings.filter((spending) => {
+      switch (query.amountOperator) {
+        case "lt":
+          return spending.amount < query.amount;
+        case "lte":
+          return spending.amount <= query.amount;
+        case "gt":
+          return spending.amount > query.amount;
+        case "gte":
+          return spending.amount >= query.amount;
+        case "eq":
+          return spending.amount === query.amount;
+        default:
+          return spending.amount === query.amount;
+      }
+    });
+  }
+  if (query.date) {
+    filteredSpendings = filteredSpendings.filter((spending) => {
+      const spendingDate = new Date(spending.date).getTime();
+
+      switch (query.dateOperator) {
+        case "lt":
+          return spendingDate < query.date.getTime;
+        case "lte":
+          return spendingDate <= query.date.getTime();
+        case "gt":
+          return spendingDate > query.date.getTime();
+        case "gte":
+          return spendingDate >= query.date.getTime();
+        case "eq":
+          return spendingDate === query.date.getTime();
+        default:
+          return spendingDate === query.date.getTime();
+      }
+    });
+  }
+  if (query.editor) {
+    filteredSpendings = filteredSpendings.filter(
+      (spending) => spending.editor === query.editor
+    );
+  }
+  res.json(filteredSpendings);
+};
 module.exports = {
   createTransportation,
   getTransportation,
@@ -304,4 +387,5 @@ module.exports = {
   addSpending,
   updateSpending,
   removeSpending,
+  getSpending,
 };
