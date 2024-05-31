@@ -4,6 +4,11 @@ const verifyAdministratorOrEditor = require("../../middleware/verifyAdministrato
 const {
   createRent,
   getRent,
+  removeRent,
 } = require("../../controllers/rent/rentController");
-router.route("/").post(verifyAdministratorOrEditor, createRent).get(getRent);
+router
+  .route("/")
+  .post(verifyAdministratorOrEditor, createRent)
+  .get(verifyAdministratorOrEditor, getRent)
+  .delete(verifyAdministratorOrEditor, removeRent);
 module.exports = router;
