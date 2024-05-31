@@ -27,13 +27,14 @@ app.use("/refresh", require("./routes/authorization/refresh"));
 app.use("/logout", require("./routes/authorization/logout"));
 app.use("/user", require("./routes/user/reader"));
 app.use("/place/info", require("./routes/places/placesInfo"));
-app.use("/transportation", require("./routes/transportation/transportation"));
+app.use("/rent", require("./routes/rent/rent"));
 
 app.use(verifyJWT);
 app.use("/admin", require("./routes/user/admin"));
 app.use("/editor", require("./routes/user/editor"));
 app.use("/reader", require("./routes/user/reader"));
 app.use("/place", require("./routes/places/places"));
+app.use("/transportation", require("./routes/transportation/transportation"));
 
 app.use(errorHandler);
 
