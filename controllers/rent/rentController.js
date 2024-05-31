@@ -27,7 +27,21 @@ const createRent = async (req, res) => {
     message: "Rent created successfully",
   });
 };
+const getRent = async (req, res) => {
+  const db = await connectToDatabase();
+  const collection = db.collection("Rent");
+  let query = {};
+  if (req.query.owner) query.owner = req.query.owner;
+  if (req.query.phone) query.phone = req.query.phone;
+  let result;
+  Object.keys(query).length === 0
+    ? (result = await collection.find({}, { projection: { _id: 0 } }).toArray())
+    : (result = await collection.findOne(query, { projection: { _id: 0 } }));
+
+  res.json(result);
+};
 
 module.exports = {
   createRent,
+  getRent,
 };
