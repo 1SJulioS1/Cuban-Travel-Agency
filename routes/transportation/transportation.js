@@ -21,16 +21,9 @@ router
 
 router
   .route("/spending/:name/:type/:phone")
-  .get(getSpending)
+  .get(verifyAdministratorOrEditor, getSpending)
   .post(verifyAdministratorOrEditor, addSpending)
   .put(verifyAdministratorOrEditor, updateSpending)
   .delete(verifyAdministratorOrEditor, removeSpending);
-
-//.get(verifyAdministratorOrEditor, listSpending)
-//Queries
-// Filter spending by date
-// Filter spending by user
-// Filter spending by amount
-// Filter spending by type
 
 module.exports = router;
