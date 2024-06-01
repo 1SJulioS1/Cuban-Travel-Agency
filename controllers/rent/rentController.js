@@ -61,7 +61,7 @@ const updateRent = async (req, res) => {
   const db = await connectToDatabase();
   const collection = db.collection("Rent");
   if (!req.query?.owner && !req.query?.phone) {
-    return res.status(404).json({ message: "Update parameters are required" });
+    return res.status(400).json({ message: "Update parameters are required" });
   }
   const rent = await collection.findOne(req.query);
   if (!rent) {

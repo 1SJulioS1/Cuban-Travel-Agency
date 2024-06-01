@@ -11,6 +11,6 @@ router
   .route("/")
   .post(createInterpreter)
   .get(getInterpreter)
-  .delete(verifyAdministratorOrEditor, removeInterpreter)
-  .put(verifyAdministratorOrEditor, updateInterpreter);
+  .delete(removeInterpreter)
+  .put(updateInterpreter);
 module.exports = router;
