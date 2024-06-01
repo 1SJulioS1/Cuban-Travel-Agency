@@ -9,8 +9,8 @@ const {
 } = require("../../controllers/interpreter/interpreterController");
 router
   .route("/")
-  .post(createInterpreter)
+  .post(verifyAdministratorOrEditor, createInterpreter)
   .get(getInterpreter)
-  .delete(removeInterpreter)
-  .put(updateInterpreter);
+  .delete(verifyAdministratorOrEditor, removeInterpreter)
+  .put(verifyAdministratorOrEditor, updateInterpreter);
 module.exports = router;

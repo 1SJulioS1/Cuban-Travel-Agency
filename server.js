@@ -29,6 +29,7 @@ app.use("/user", require("./routes/user/reader"));
 app.use("/place/info", require("./routes/places/placesInfo"));
 app.use("/rent", require("./routes/rent/rent"));
 app.use("/interpreter", require("./routes/interpreter/interpreter"));
+app.use("/guide", require("./routes/guide/guide"));
 
 app.use(verifyJWT);
 app.use("/admin", require("./routes/user/admin"));
