@@ -5,10 +5,13 @@ const {
   createRent,
   getRent,
   removeRent,
+  updateRent,
 } = require("../../controllers/rent/rentController");
 router
   .route("/")
   .post(verifyAdministratorOrEditor, createRent)
-  .get(verifyAdministratorOrEditor, getRent)
-  .delete(verifyAdministratorOrEditor, removeRent);
+  .get(getRent)
+  .delete(verifyAdministratorOrEditor, removeRent)
+  .put(verifyAdministratorOrEditor, updateRent);
 module.exports = router;
+S;

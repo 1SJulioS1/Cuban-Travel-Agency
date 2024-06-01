@@ -57,8 +57,37 @@ const removeRent = async (req, res) => {
   res.status(200).json({ message: "Document deleted successfully" });
 };
 
+const updateRent = async (req, res) => {
+  const db = await connectToDatabase();
+  const collection = db.collection("Rent");
+  if (!req.query?.owner && !req.query?.phone) {
+    return res.status(404).json({ message: "Update parameters are required" });
+  }
+  const rent = await collection.findOne(req.query);
+  if (!rent) {
+    return res.status(400).json({ message: "Rent service not found" });
+  }
+  const rentData = req.body;
+  if (Object.keys(req.body).length === 0) {
+    return res.sendStatus(400).json({ message: "No data submitted" });
+  }
+  const updateFields = {};
+  for (const key in rentData) {
+    if (rentData[key] !== rent[key]) {
+      updateFields[key] = rentData[key];
+    }
+  }
+  if (Object.keys(updateFields).length === 0) {
+    return res.status(400).json({ message: "Provide a different rent data" });
+  }
+
+  const result = await collection.updateOne(req.query, { $set: updateFields });
+  return res.status(200).json({ message: "Rent service updated successfully" });
+};
+
 module.exports = {
   createRent,
   getRent,
   removeRent,
+  updateRent,
 };
