@@ -14,4 +14,3 @@ router
   .delete(verifyAdministratorOrEditor, removeRent)
   .put(verifyAdministratorOrEditor, updateRent);
 module.exports = router;
-S;
