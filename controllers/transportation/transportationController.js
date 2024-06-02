@@ -21,6 +21,7 @@ const createTransportation = async (req, res) => {
     type: req.body.type,
     phone: req.body.phone,
   };
+  document.tours = []; // Inicialmente vacío
 
   if (req.body.information) document.information = req.body.information;
   if (req.body.spending) {

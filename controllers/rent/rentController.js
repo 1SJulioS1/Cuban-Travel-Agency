@@ -14,7 +14,10 @@ const createRent = async (req, res) => {
   ) {
     res.status(400).json({ message: "Rent parameters are required" });
   }
+
   const rentData = req.body;
+  rentData.tours = [];
+
   const duplicate = await collection.findOne({
     owner: rentData.owner,
     phone: rentData.phone,

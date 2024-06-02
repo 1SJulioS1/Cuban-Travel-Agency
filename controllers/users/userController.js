@@ -23,6 +23,7 @@ const createUser = async (req, res) => {
     password: hashedPwd,
     email,
     photo,
+    tours: [],
   });
   return res.status(201).json({ message: "User created successfully" });
 };

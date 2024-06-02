@@ -18,6 +18,7 @@ const createPlace = async (req, res) => {
   const result = await db.collection("Places").insertOne({
     name,
     photos: itemsArray,
+    tours: [],
   });
   return res.status(201).json({ message: "Place created successfully" });
 };
