@@ -80,10 +80,38 @@ const updateInterpreter = async (req, res) => {
     .status(200)
     .json({ message: "Interpreter service updated successfully" });
 };
+const getInterpreterTours = async (req, res) => {
+  const db = await connectToDatabase();
+  const collection = db.collection("Interpreter");
+  if (!req.params.interpreterId) {
+    return res.status(400).json({ message: "Interpreter Id data is required" });
+  }
+  if (!ObjectId.isValid(req.params.interpreterId)) {
+    return res.status(400).json({ message: "Invalid Interpreter ID" });
+  }
+  const interpreterWithTours = await collection
+    .aggregate([
+      { $match: { _id: req.params.interpreterId } },
+      {
+        $lookup: {
+          from: "Tour",
+          localField: "_id",
+          foreignField: "interpreters",
+          as: "tours",
+        },
+      },
+    ])
+    .toArray();
 
+  if (interpreterWithTours.length === 0) {
+    return res.status(404).json({ message: "Interpreter not found" });
+  }
+  res.status(200).json(interpreterWithTours[0]);
+};
 module.exports = {
   createInterpreter,
   getInterpreter,
   removeInterpreter,
   updateInterpreter,
+  getInterpreterTours,
 };

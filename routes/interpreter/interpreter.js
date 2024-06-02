@@ -6,6 +6,7 @@ const {
   getInterpreter,
   removeInterpreter,
   updateInterpreter,
+  getInterpreterTours,
 } = require("../../controllers/interpreter/interpreterController");
 router
   .route("/")
@@ -13,4 +14,6 @@ router
   .get(getInterpreter)
   .delete(verifyAdministratorOrEditor, removeInterpreter)
   .put(verifyAdministratorOrEditor, updateInterpreter);
+
+router.route("/:interpreterId/tours").get(getInterpreterTours);
 module.exports = router;

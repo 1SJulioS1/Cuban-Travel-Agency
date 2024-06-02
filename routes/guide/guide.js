@@ -6,6 +6,7 @@ const {
   getGuide,
   removeGuide,
   updateGuide,
+  getGuideTours,
 } = require("../../controllers/guide/guideController");
 router
   .route("/")
@@ -13,4 +14,6 @@ router
   .get(getGuide)
   .delete(removeGuide)
   .put(updateGuide);
+
+router.route("/:guideId/tours").get(getGuideTours);
 module.exports = router;

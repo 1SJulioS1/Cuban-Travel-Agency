@@ -77,9 +77,38 @@ const updateGuide = async (req, res) => {
   return res.status(200).json({ message: "Guide updated successfully" });
 };
 
+const getGuideTours = async (req, res) => {
+  const db = await connectToDatabase();
+  const collection = db.collection("Guide");
+  if (!req.params.guideId) {
+    return res.status(400).json({ message: "Guide Id data is required" });
+  }
+  if (!ObjectId.isValid(req.params.guideId)) {
+    return res.status(400).json({ message: "Invalid Guide ID" });
+  }
+  const guideWithTours = await collection
+    .aggregate([
+      { $match: { _id: req.params.guideId } },
+      {
+        $lookup: {
+          from: "Tour",
+          localField: "_id",
+          foreignField: "guides",
+          as: "tours",
+        },
+      },
+    ])
+    .toArray();
+
+  if (guideWithTours.length === 0) {
+    return res.status(404).json({ message: "Guide not found" });
+  }
+  res.status(200).json(guideWithTours[0]);
+};
 module.exports = {
   createGuide,
   getGuide,
   removeGuide,
   updateGuide,
+  getGuideTours,
 };
