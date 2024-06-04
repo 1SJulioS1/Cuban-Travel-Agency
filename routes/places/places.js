@@ -6,9 +6,14 @@ const {
   createPlace,
   updatePlace,
   removePlace,
+  getPlace,
 } = require("../../controllers/places/placesController");
 
-router.route("/").post(verifyAdministratorOrEditor, createPlace);
-router.route("/:name").put(verifyAdministratorOrEditor, updatePlace);
-router.route("/:name").delete(verifyAdministratorOrEditor, removePlace);
+router
+  .route("/")
+  .post(verifyAdministratorOrEditor, createPlace)
+  .get(getPlace)
+  .delete(verifyAdministratorOrEditor, removePlace)
+  .put(verifyAdministratorOrEditor, updatePlace);
+
 module.exports = router;

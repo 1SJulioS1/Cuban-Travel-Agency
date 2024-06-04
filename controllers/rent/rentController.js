@@ -12,7 +12,7 @@ const createRent = async (req, res) => {
     !req.body?.description ||
     !req.body?.price
   ) {
-    res.status(400).json({ message: "Rent parameters are required" });
+    return res.status(400).json({ message: "Rent parameters are required" });
   }
 
   const rentData = req.body;
@@ -26,7 +26,7 @@ const createRent = async (req, res) => {
     return res.status(401).json({ message: "Duplicated rent service" });
   }
   const result = await collection.insertOne(rentData);
-  res.status(201).json({
+  return res.status(201).json({
     message: "Rent created successfully",
   });
 };
@@ -47,7 +47,7 @@ const removeRent = async (req, res) => {
   const db = await connectToDatabase();
   const collection = db.collection("Rent");
   if (!req.query?.owner || !req.query?.phone) {
-    res.status(400).json({ message: "Rent parameters are required" });
+    return res.status(400).json({ message: "Rent parameters are required" });
   }
   const { owner, phone } = req.query;
 
@@ -57,7 +57,7 @@ const removeRent = async (req, res) => {
     return res.status(404).json({ error: "Document not found" });
   }
 
-  res.status(200).json({ message: "Document deleted successfully" });
+  return res.status(200).json({ message: "Document deleted successfully" });
 };
 
 const updateRent = async (req, res) => {

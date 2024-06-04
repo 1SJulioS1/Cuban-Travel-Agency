@@ -2,42 +2,69 @@ const { connectToDatabase } = require("../../config/dbConn.js");
 const createInterpreter = async (req, res) => {
   const db = await connectToDatabase();
   const collection = db.collection("Interpreter");
-  if (!req.body?.name || !req.body?.phone || !req.body?.history) {
-    res.status(400).json({ message: "Interpreter data is required" });
+  if (!req.body.name || !req.body.phone) {
+    return res
+      .status(400)
+      .json({ message: "Interpreter name and phone are required" });
   }
-  const interpreterData = req.body;
-  const duplicate = await collection.findOne({
-    name: interpreterData.name,
-    phone: interpreterData.phone,
-  });
-  if (duplicate) {
-    return res.status(401).json({ message: "Duplicated rent service" });
-  }
-  const result = await collection.insertOne(interpreterData);
-  res.status(201).json({
-    message: "Interpreter created successfully",
+  const allowedFields = ["name", "phone", "email", "history"];
+  validateFields("body", allowedFields)(req, res, async () => {
+    const duplicate = await collection.findOne({
+      name: req.body.name,
+      phone: req.body.phone,
+    });
+    if (duplicate) {
+      return res.status(401).json({ message: "Duplicated place" });
+    }
+    const result = await collection.insertOne({
+      name: req.body.name,
+      phone: req.body.phone,
+      tours: [],
+    });
+    return res.status(201).json({
+      message: "Interpreter created successfully",
+    });
   });
 };
+
 const getInterpreter = async (req, res) => {
   const db = await connectToDatabase();
   const collection = db.collection("Interpreter");
-  let query = {};
-  if (req.query?.name) query.name = req.query.name;
-  if (req.query?.name) query.phone = req.query.phone;
-  let result;
-  console.log(query);
-  Object.keys(query).length === 0
-    ? (result = await collection.find({}, { projection: { _id: 0 } }).toArray())
-    : (result = await collection.findOne(query, { projection: { _id: 0 } }));
-
-  res.json(result);
+  if (Object.keys(req.query).length === 0) {
+    const result = await collection.find({}).toArray();
+    return res.json(result);
+  } else {
+    if (!req.query?.name || !req.query?.phone) {
+      return res
+        .status(400)
+        .json({ message: "Interpreter name and phone are required" });
+    }
+    const allowedFields = ["name", "phone"];
+    validateFields("query", allowedFields)(req, res, async () => {
+      const result = await collection.findOne({
+        name: req.query.name,
+        phone: req.query.phone,
+      });
+      if (!result) {
+        return res
+          .status(400)
+          .json({ message: `Place with name ${req.query.name} not found` });
+      }
+      return res.json(result);
+    });
+  }
 };
 
 const removeInterpreter = async (req, res) => {
   const db = await connectToDatabase();
   const collection = db.collection("Interpreter");
   if (!req.query?.name || !req.query?.phone) {
-    res.status(400).json({ message: "Interpreter parameters are required" });
+    res
+      .status(400)
+      .json({ message: "Interpreter name and phone are required" });
+  }
+  if (Object.keys(req.body).length !== 2) {
+    return res.status(400).json({ message: "Invalid query parameter" });
   }
   const { name, phone } = req.query;
 
@@ -47,7 +74,7 @@ const removeInterpreter = async (req, res) => {
     return res.status(404).json({ error: "Document not found" });
   }
 
-  res.status(200).json({ message: "Document deleted successfully" });
+  return res.status(200).json({ message: "Document deleted successfully" });
 };
 const updateInterpreter = async (req, res) => {
   const db = await connectToDatabase();
@@ -55,30 +82,32 @@ const updateInterpreter = async (req, res) => {
   if (!req.query?.name && !req.query?.phone) {
     return res.status(400).json({ message: "Update parameters are required" });
   }
-  const interpreter = await collection.findOne(req.query);
-  if (!interpreter) {
-    return res.status(400).json({ message: "Interpreter  not found" });
-  }
-  const interpreterData = req.body;
-  if (Object.keys(req.body).length === 0) {
-    return res.sendStatus(400).json({ message: "No data submitted" });
-  }
-  const updateFields = {};
-  for (const key in interpreterData) {
-    if (interpreterData[key] !== interpreter[key]) {
-      updateFields[key] = interpreterData[key];
+  const allowedFields = ["name", "phone"];
+  validateFields("body", allowedFields)(req, res, async () => {
+    const interpreter = await collection.findOne(req.query);
+    if (!interpreter) {
+      return res.status(400).json({ message: "Interpreter  not found" });
     }
-  }
-  if (Object.keys(updateFields).length === 0) {
-    return res
-      .status(400)
-      .json({ message: "Provide a different interpreter data" });
-  }
+    const interpreterData = req.body;
 
-  const result = await collection.updateOne(req.query, { $set: updateFields });
-  return res
-    .status(200)
-    .json({ message: "Interpreter service updated successfully" });
+    const updateFields = {};
+    for (const key in interpreterData) {
+      if (interpreterData[key] !== interpreter[key]) {
+        updateFields[key] = interpreterData[key];
+      }
+    }
+    if (Object.keys(updateFields).length === 0) {
+      return res
+        .status(400)
+        .json({ message: "Provide a different interpreter data" });
+    }
+    const result = await collection.updateOne(req.query, {
+      $set: updateFields,
+    });
+    return res
+      .status(200)
+      .json({ message: "Interpreter service updated successfully" });
+  });
 };
 const getInterpreterTours = async (req, res) => {
   const db = await connectToDatabase();
@@ -106,7 +135,7 @@ const getInterpreterTours = async (req, res) => {
   if (interpreterWithTours.length === 0) {
     return res.status(404).json({ message: "Interpreter not found" });
   }
-  res.status(200).json(interpreterWithTours[0]);
+  return res.status(200).json(interpreterWithTours[0]);
 };
 module.exports = {
   createInterpreter,
