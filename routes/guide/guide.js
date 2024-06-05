@@ -10,10 +10,10 @@ const {
 } = require("../../controllers/guide/guideController");
 router
   .route("/")
-  .post(createGuide)
-  .get(getGuide)
-  .delete(removeGuide)
-  .put(updateGuide);
+  .post(verifyAdministratorOrEditor, createGuide)
+  .get(verifyAdministratorOrEditor, getGuide)
+  .delete(verifyAdministratorOrEditor, removeGuide)
+  .put(verifyAdministratorOrEditor, updateGuide);
 
 router.route("/:guideId/tours").get(getGuideTours);
 module.exports = router;

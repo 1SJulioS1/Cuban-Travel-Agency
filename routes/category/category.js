@@ -9,8 +9,8 @@ const {
 } = require("../../controllers/category/categoryController");
 router
   .route("/")
-  .post(createCategory)
+  .post(verifyAdministratorOrEditor, createCategory)
   .get(getCategory)
-  .delete(removeCategory)
-  .put(updateCategory);
+  .delete(verifyAdministratorOrEditor, removeCategory)
+  .put(verifyAdministratorOrEditor, updateCategory);
 module.exports = router;

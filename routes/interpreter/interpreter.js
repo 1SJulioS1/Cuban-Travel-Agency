@@ -11,7 +11,7 @@ const {
 router
   .route("/")
   .post(verifyAdministratorOrEditor, createInterpreter)
-  .get(getInterpreter)
+  .get(verifyAdministratorOrEditor, getInterpreter)
   .delete(verifyAdministratorOrEditor, removeInterpreter)
   .put(verifyAdministratorOrEditor, updateInterpreter);
 

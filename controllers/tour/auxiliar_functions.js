@@ -1,4 +1,5 @@
 const { connectToDatabase } = require("../../config/dbConn.js");
+const { ObjectId } = require("mongodb");
 
 const updateRelatedCollections = async (collectionName, ids, tourId) => {
   const db = await connectToDatabase();

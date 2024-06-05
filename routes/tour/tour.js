@@ -9,8 +9,8 @@ const {
 } = require("../../controllers/tour/tourController");
 router
   .route("/")
-  .post(createTour)
+  .post(verifyAdministratorOrEditor, createTour)
   .get(getTour)
-  .delete(removeTour)
-  .put(updateTour);
+  .delete(verifyAdministratorOrEditor, removeTour)
+  .put(verifyAdministratorOrEditor, updateTour);
 module.exports = router;

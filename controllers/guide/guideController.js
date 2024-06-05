@@ -1,4 +1,5 @@
 const { connectToDatabase } = require("../../config/dbConn.js");
+const { ObjectId } = require("mongodb");
 
 const createGuide = async (req, res) => {
   const db = await connectToDatabase();
